@@ -184,6 +184,7 @@ class SyncProcess
             } else {
                 $partition['messages'][] = $record['value'];
             }
+            $partition['create_millisecond'] = $record['create_millisecond'] ?? 0;
 
             $topicData['partitions'][$partId]      = $partition;
             $topicData['topic_name']               = $record['topic'];

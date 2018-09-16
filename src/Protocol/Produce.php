@@ -33,6 +33,11 @@ class Produce extends Protocol
      */
     private $clock;
 
+    /**
+     * @var int
+     */
+    private $create_millisecond;
+
     public function __construct(string $version = self::DEFAULT_BROKER_VERION, ?Clock $clock = null)
     {
         parent::__construct($version);
@@ -129,7 +134,9 @@ class Produce extends Protocol
         $data .= self::pack(self::BIT_B8, (string) $attributes);
 
         if ($magic >= self::MESSAGE_MAGIC_VERSION1) {
-            $data .= self::pack(self::BIT_B64, $this->clock->now()->format('Uv'));
+            $create_millisecond = $this->create_millisecond;
+            if(empty($create_millisecond)) $create_millisecond = intval(microtime(true) * 1000);
+            $data .= self::pack(self::BIT_B64, strval($create_millisecond));
         }
 
         $key = '';
@@ -207,6 +214,8 @@ class Produce extends Protocol
         if (! isset($values['messages']) || empty($values['messages'])) {
             throw new ProtocolException('given produce data invalid. `messages` is undefined.');
         }
+
+        $this->create_millisecond = $values['create_millisecond'] ?? 0;
 
         $data  = self::pack(self::BIT_B32, (string) $values['partition_id']);
         $data .= self::encodeString(
