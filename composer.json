@@ -1,5 +1,5 @@
 {
-    "name": "CHENXCHEN/kafka-php",
+    "name": "chenxchen/kafka-php",
     "description": "Kafka client for php",
     "type": "library",
     "keywords": [
