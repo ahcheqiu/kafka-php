@@ -162,7 +162,14 @@ class Fetch extends Protocol
             }
 
             $innerMessages = $this->decodeMessageSetArray($ret['data']['message']['value'], $ret['length']);
-            $result        = array_merge($result, $innerMessages['data']);
+
+            $baseOffset = $ret['data']['offset'] - sizeof($innerMessages['data']) + 1;
+
+            for ($i = 0; $i < sizeof($innerMessages['data']); $i++) {
+                $innerMessages['data'][$i]['offset'] = $baseOffset + $i;
+            }
+
+            $result = array_merge($result, $innerMessages['data']);
         }
 
         if ($offset < $messageSetSize) {
@@ -187,6 +194,8 @@ class Fetch extends Protocol
 
         $offset      = 0;
         $roffset     = self::unpack(self::BIT_B64, substr($data, $offset, 8));
+
+
         $offset     += 8;
         $messageSize = self::unpack(self::BIT_B32, substr($data, $offset, 4));
         $offset     += 4;
