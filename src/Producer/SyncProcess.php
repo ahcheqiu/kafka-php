@@ -68,6 +68,8 @@ class SyncProcess
         $result   = [];
         foreach ($sendData as $brokerId => $topicList) {
             $connect = $broker->getDataConnect((string) $brokerId, true);
+            // make sure socket is not closed and connect if closed
+            $connect->connect();
 
             if ($connect === null) {
                 return [];
